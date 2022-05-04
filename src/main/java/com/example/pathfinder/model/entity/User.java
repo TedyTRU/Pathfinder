@@ -14,7 +14,7 @@ public class User extends BaseEntity {
     private Integer age;
     private String password;
     private String email;
-    private Set<Role> role;
+    private Set<Role> roles;
     private LevelEnum level;
 
     @Column(nullable = false)
@@ -48,12 +48,12 @@ public class User extends BaseEntity {
     }
 
     @ManyToMany
-    public Set<Role> getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public User setRole(Set<Role> role) {
-        this.role = role;
+    public User setRoles(Set<Role> roles) {
+        this.roles = roles;
         return this;
     }
 
