@@ -6,4 +6,10 @@ public interface UserService {
 
     void registerUser(UserServiceModel userServiceModel);
 
+    UserServiceModel findUserByUsernameAndPassword(String username, String password);
+
+    void loginCurrentUser(Long id, String username);
+
+    void logout();
+
 }

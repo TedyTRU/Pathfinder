@@ -1,8 +1,10 @@
 package com.example.pathfinder.web;
 
+import com.example.pathfinder.model.binding.UserLoginBindingModel;
 import com.example.pathfinder.model.binding.UserRegisterBindingModel;
 import com.example.pathfinder.model.sevice.UserServiceModel;
 import com.example.pathfinder.service.UserService;
+import com.example.pathfinder.util.CurrentUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +34,11 @@ public class UserController {
         return new UserRegisterBindingModel();
     }
 
+    @ModelAttribute
+    public UserLoginBindingModel userLoginBindingModel() {
+        return new UserLoginBindingModel();
+    }
+
     @GetMapping("/register")
     public String register(Model model) {
         return "register";
@@ -57,8 +64,46 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("isExist", true);
+
         return "login";
+    }
+
+    @PostMapping("/login")
+    public String loginConfirm(@Valid UserLoginBindingModel userLoginBindingModel,
+                               BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes
+                    .addFlashAttribute("userLoginBindingModel", userLoginBindingModel)
+                    .addFlashAttribute("org.springframework.validation.BindingResult.userLoginBindingModel", bindingResult);
+
+            return "redirect:login";
+        }
+
+        UserServiceModel user = userService
+                .findUserByUsernameAndPassword(userLoginBindingModel.getUsername(), userLoginBindingModel.getPassword());
+
+        if (user == null) {
+            redirectAttributes
+                    .addFlashAttribute("isExist", false)
+                    .addFlashAttribute("userLoginBindingModel", userLoginBindingModel)
+                    .addFlashAttribute("org.springframework.validation.BindingResult.userLoginBindingModel", bindingResult);
+
+            return "redirect:login";
+        }
+
+        userService.loginCurrentUser(user.getId(), user.getUsername());
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        userService.logout();
+
+        return "redirect:/";
     }
 
 }
