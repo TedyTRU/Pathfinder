@@ -1,5 +1,5 @@
 package com.example.pathfinder.service;
-
+;
 import com.example.pathfinder.model.sevice.UserServiceModel;
 
 public interface UserService {
@@ -11,5 +11,9 @@ public interface UserService {
     void loginCurrentUser(Long id, String username);
 
     void logout();
+
+    UserServiceModel findById(Long id);
+
+    boolean isNameExists(String username);
 
 }
